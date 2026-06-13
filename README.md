@@ -28,8 +28,6 @@ Every tool is designed as a familiar, capable alternative to a mainstream app, w
 | Raven Email | https://tmanish.github.io/raven-suite/raven-email.html |
 | Raven Figgy | https://tmanish.github.io/raven-suite/raven-figgy.html |
 
-*(These links assume the repository is named `raven-suite`. If you name it something else, change that part of the URL.)*
-
 ---
 
 ## Quick start
@@ -58,7 +56,6 @@ To publish the whole suite as a website, drop the files onto any static host —
 
 - Plain HTML, CSS, and JavaScript. No framework, no bundler, no build step.
 - Rendering uses native browser primitives (`contenteditable`, Canvas, SVG, the DOM, and the CSS Object Model) plus a small number of well‑known open‑source libraries, loaded at runtime from public CDNs.
-- Apple‑inspired "frosted glass" interface with a light and dark theme.
 
 Per‑app libraries (all open source — see [License](#license)):
 
@@ -76,8 +73,6 @@ Web fonts (Google Fonts): Raven Write loads Roboto, Open Sans, and DM Sans; Rave
 ---
 
 ## Security & privacy
-
-This is the part that matters most for a tool people trust with their files.
 
 - **No backend.** There is no server that receives your data. There are no accounts, no logins, no cookies, and no analytics or telemetry of any kind.
 - **Your files stay on your machine.** Opening a document reads it locally through the browser's File API. Exports are generated in the browser and saved with a normal download. Nothing is transmitted.
@@ -143,7 +138,6 @@ See each app's **Limitations** section for full detail.
     └── raven-figgy.md
 ```
 
-You can keep the apps at the repo root (as above) or move them into an `apps/` folder — just update the links in this README and in `docs/` accordingly.
 
 ---
 
