@@ -17,6 +17,19 @@ Every tool is designed as a familiar, capable alternative to a mainstream app, w
 | **Raven Email** | HTML‑to‑EML email builder | [`raven-email.html`](raven-email.html) | [docs](docs/raven-email.md) |
 | **Raven Figgy** | Vector / UI design tool | [`raven-figgy.html`](raven-figgy.html) | [docs](docs/raven-figgy.md) |
 
+**▶ Use them online.** Once GitHub Pages is enabled (see [Quick start](#quick-start)), the whole suite is live at **<https://tmanish.github.io/raven-suite/>**, and each tool opens directly in the browser:
+
+| App | Open in your browser |
+|-----|----------------------|
+| Raven Write | https://tmanish.github.io/raven-suite/raven-write.html |
+| Raven PDF | https://tmanish.github.io/raven-suite/raven-pdf.html |
+| Raven Sheets | https://tmanish.github.io/raven-suite/raven-sheets.html |
+| Raven Slides | https://tmanish.github.io/raven-suite/raven-slides.html |
+| Raven Email | https://tmanish.github.io/raven-suite/raven-email.html |
+| Raven Figgy | https://tmanish.github.io/raven-suite/raven-figgy.html |
+
+*(These links assume the repository is named `raven-suite`. If you name it something else, change that part of the URL.)*
+
 ---
 
 ## Quick start
@@ -26,7 +39,7 @@ There is nothing to install.
 1. Download the `.html` file for the tool you want.
 2. Double‑click it, or open it in any modern browser (Chrome, Edge, Firefox, Safari).
 
-To publish the whole suite as a website, drop the files onto any static host — GitHub Pages, Netlify, Vercel, Cloudflare Pages, or an S3 bucket. No server‑side code is required.
+To publish the whole suite as a website, drop the files onto any static host — GitHub Pages, Netlify, Vercel, Cloudflare Pages, or an S3 bucket. No server‑side code is required. When you enable GitHub Pages, the included `index.html` becomes the home page, with the six tools sitting alongside it.
 
 > **First load needs internet.** Most apps pull their libraries (and, in two cases, web fonts) from public CDNs the first time they open. After that the browser caches them. For fully offline or air‑gapped use, see [Offline & self‑hosting](#offline--self-hosting).
 
@@ -109,12 +122,18 @@ See each app's **Limitations** section for full detail.
 .
 ├── README.md            ← this file
 ├── LICENSE              ← GPL-3.0 (your code)
+├── CONTRIBUTING.md      ← how to help
+├── index.html           ← landing page (the home page on GitHub Pages)
 ├── raven-write.html
 ├── raven-pdf.html
 ├── raven-sheets.html
 ├── raven-slides.html
 ├── raven-email.html
 ├── raven-figgy.html
+├── .github/
+│   └── ISSUE_TEMPLATE/
+│       ├── bug_report.md
+│       └── feature_request.md
 └── docs/
     ├── raven-write.md
     ├── raven-pdf.md
@@ -141,7 +160,7 @@ You can keep the apps at the repo root (as above) or move them into an `apps/` f
 
 The original Raven Suite code is released under the **GNU General Public License v3.0 (GPL-3.0)** — see [LICENSE](LICENSE). You are free to use, modify, host, and redistribute it, but **any copy or modified version you distribute must also be released as open source under the GPL-3.0**. This is deliberate: it keeps every improvement available to the next person, so the tools stay free and open for everyone.
 
-Copyright © 2026 \Manish Todkari. *(Replace with your name. For GPL projects the copyright line lives here in the README; the `LICENSE` file holds the standard, unmodified license text.)*
+Copyright © 2026 \ Manish Todkari. *(Replace with your name. For GPL projects the copyright line lives here in the README; the `LICENSE` file holds the standard, unmodified license text.)*
 
 The third‑party libraries and fonts the apps load remain under **their own licenses**. All of them (MIT, BSD, and Apache‑2.0) are compatible with the GPL-3.0, so there is no conflict in distributing the suite under GPL-3.0:
 

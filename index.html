@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raven Suite — privacy-first browser tools</title>
+<meta name="description" content="Six free, open-source web apps in single HTML files — word processor, PDF editor, spreadsheet, slides, email builder, and design tool. No installs, no accounts; everything runs in your browser.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3QgeD0iNCIgeT0iNCIgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iMTIiIHJ5PSIxMiIgZmlsbD0id2hpdGUiLz4KICA8dGV4dCB4PSIzMiIgeT0iNDYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSInSW50ZXInLCAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzBmMTcyOSI+UjwvdGV4dD4KPC9zdmc+Cg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d0d12; --graphite:#3a3a44; --mist:#71717f;
+    --bg:#e9ebf0; --panel:rgba(255,255,255,.72); --panel-solid:#ffffff;
+    --hairline:rgba(13,13,18,.10);
+    --raven-a:#5b4bdb; --raven-b:#7b5cf0; --raven-c:#3aa6c9;
+    --raven-grad:linear-gradient(120deg,#5b4bdb 0%,#7b5cf0 46%,#3aa6c9 100%);
+    --glass-border:rgba(255,255,255,.6);
+    --shadow-soft:0 1px 2px rgba(13,13,18,.05),0 10px 30px rgba(13,13,18,.08);
+    --shadow-pop:0 2px 10px rgba(13,13,18,.10),0 24px 60px rgba(13,13,18,.16);
+    --chip:rgba(255,255,255,.6);
+  }
+  [data-theme="dark"]{
+    --ink:#f2f2f6; --graphite:#c9c9d2; --mist:#8b8b96;
+    --bg:#0f0f14; --panel:rgba(29,29,37,.62); --panel-solid:#1d1d25;
+    --hairline:rgba(255,255,255,.10);
+    --glass-border:rgba(255,255,255,.09);
+    --shadow-soft:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.4);
+    --shadow-pop:0 2px 10px rgba(0,0,0,.5),0 24px 60px rgba(0,0,0,.6);
+    --chip:rgba(255,255,255,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    min-height:100vh; position:relative; overflow-x:hidden;
+  }
+  /* ambient iridescent field behind the glass */
+  .field{position:fixed; inset:0; z-index:-1; overflow:hidden}
+  .field::before,.field::after{
+    content:""; position:absolute; border-radius:50%; filter:blur(80px); opacity:.55;
+    animation:drift 26s ease-in-out infinite;
+  }
+  .field::before{width:60vw;height:60vw;left:-10vw;top:-18vw;background:radial-gradient(circle at 30% 30%,#7b5cf0,transparent 65%)}
+  .field::after{width:55vw;height:55vw;right:-12vw;bottom:-16vw;background:radial-gradient(circle at 60% 60%,#3aa6c9,transparent 62%);animation-delay:-13s}
+  .field .spark{position:absolute;width:42vw;height:42vw;left:35vw;top:30vh;border-radius:50%;filter:blur(90px);opacity:.4;background:radial-gradient(circle,#5b4bdb,transparent 60%);animation:drift 34s ease-in-out infinite;animation-delay:-6s}
+  [data-theme="dark"] .field::before,[data-theme="dark"] .field::after,[data-theme="dark"] .field .spark{opacity:.32}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vw,3vh) scale(1.08)}66%{transform:translate(-3vw,-2vh) scale(.95)}}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* top bar */
+  header.bar{display:flex;align-items:center;justify-content:space-between;padding:22px 0 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .dot{width:26px;height:26px;border-radius:8px;background:var(--raven-grad);box-shadow:var(--shadow-soft);flex-shrink:0}
+  .bar-actions{display:flex;align-items:center;gap:8px}
+  .ghost{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--hairline);background:var(--chip);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);color:var(--ink);font:inherit;font-size:13px;font-weight:500;text-decoration:none;cursor:pointer;transition:transform .12s,background .15s}
+  .ghost:hover{transform:translateY(-1px)}
+  .ghost svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+  .icon-only{width:36px;padding:0;justify-content:center}
+
+  /* hero */
+  .hero{text-align:center;padding:74px 0 36px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--mist);background:var(--chip);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--hairline);padding:7px 14px;border-radius:999px;margin-bottom:24px}
+  .eyebrow .pip{width:7px;height:7px;border-radius:50%;background:var(--raven-grad)}
+  h1{font-size:clamp(38px,7vw,68px);line-height:1.02;font-weight:800;letter-spacing:-.03em;margin-bottom:18px}
+  h1 .grad{background:var(--raven-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .lede{max-width:600px;margin:0 auto;font-size:clamp(16px,2.4vw,19px);line-height:1.55;color:var(--graphite)}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:26px}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--graphite);background:var(--chip);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--hairline);padding:8px 14px;border-radius:999px}
+  .chip svg{width:15px;height:15px;fill:none;stroke:var(--raven-a);stroke-width:1.9}
+  [data-theme="dark"] .chip svg{stroke:var(--raven-b)}
+
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:30px 0 14px}
+  @media(max-width:880px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .card{
+    display:flex;flex-direction:column;gap:14px;padding:24px;border-radius:20px;
+    background:var(--panel);backdrop-filter:blur(26px) saturate(1.7);-webkit-backdrop-filter:blur(26px) saturate(1.7);
+    border:1px solid var(--glass-border);box-shadow:var(--shadow-soft);
+    text-decoration:none;color:inherit;position:relative;overflow:hidden;
+    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+  }
+  .card::after{content:"";position:absolute;inset:0;border-radius:20px;border:1px solid transparent;background:linear-gradient(135deg,rgba(255,255,255,.5),transparent 40%);-webkit-mask:linear-gradient(#000,#000);pointer-events:none;opacity:.6}
+  [data-theme="dark"] .card::after{background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 40%)}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-pop);border-color:rgba(123,92,240,.35)}
+  .card:focus-visible{outline:none;box-shadow:var(--shadow-pop),0 0 0 3px var(--raven-b)}
+  .tile{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;box-shadow:0 6px 18px rgba(91,75,219,.28);flex-shrink:0}
+  .tile svg{width:25px;height:25px;fill:none;stroke:#fff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .card h3{font-size:17px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+  .role{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--mist)}
+  .card p{font-size:13.5px;line-height:1.5;color:var(--graphite);flex:1}
+  .open{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--raven-a);margin-top:2px}
+  [data-theme="dark"] .open{color:var(--raven-b)}
+  .open svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;transition:transform .15s}
+  .card:hover .open svg{transform:translateX(3px)}
+
+  /* note + footer */
+  .note{margin:30px 0 10px;padding:18px 22px;border-radius:16px;background:var(--chip);border:1px solid var(--hairline);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-size:13.5px;line-height:1.55;color:var(--graphite);text-align:center}
+  .note b{color:var(--ink)}
+  footer{text-align:center;padding:34px 0 56px;color:var(--mist);font-size:12.5px;line-height:1.7}
+  footer a{color:var(--graphite);text-decoration:none;border-bottom:1px solid var(--hairline)}
+  footer a:hover{color:var(--ink)}
+
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="field" aria-hidden="true"><div class="spark"></div></div>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="brand"><span class="dot"></span> Raven Suite</div>
+    <div class="bar-actions">
+      <a class="ghost" href="https://github.com/tmanish/raven-suite" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.6.69.49A10.03 10.03 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+        GitHub
+      </a>
+      <button class="ghost icon-only" id="theme" aria-label="Toggle light or dark theme" title="Toggle theme">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="pip"></span> Six tools · one browser tab · zero uploads</span>
+    <h1>A small studio of<br><span class="grad">everyday tools</span></h1>
+    <p class="lede">Write documents, edit PDFs, crunch spreadsheets, build slide decks, craft emails, and design interfaces — each a single web page that runs entirely on your device. No installs, no accounts, nothing sent anywhere.</p>
+    <div class="chips">
+      <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6z"/></svg> Private by design</span>
+      <span class="chip"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> No install, no sign-up</span>
+      <span class="chip"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/></svg> Free &amp; open source</span>
+    </div>
+  </section>
+
+  <main class="grid" aria-label="Apps">
+    <a class="card" href="raven-write.html">
+      <span class="tile" style="background:linear-gradient(135deg,#5b4bdb,#6f5bea)"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></span>
+      <span class="role">Word processor</span>
+      <h3>Raven Write</h3>
+      <p>Write and format documents, open Word files, and export to PDF, Markdown, or HTML.</p>
+      <span class="open">Open Write <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="card" href="raven-pdf.html">
+      <span class="tile" style="background:linear-gradient(135deg,#6a4fe6,#7b5cf0)"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M11 13h2a1.5 1.5 0 010 3h-2zM11 13v6"/></svg></span>
+      <span class="role">PDF studio</span>
+      <h3>Raven PDF</h3>
+      <p>View, reorder, rotate, merge, and annotate PDFs — then export with your edits baked in.</p>
+      <span class="open">Open PDF <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="card" href="raven-sheets.html">
+      <span class="tile" style="background:linear-gradient(135deg,#6e63ec,#5f8be6)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M4 15h16M10 4v16"/></svg></span>
+      <span class="role">Spreadsheet</span>
+      <h3>Raven Sheets</h3>
+      <p>Enter data, write formulas, and style cells across multiple sheets; open and export .xlsx.</p>
+      <span class="open">Open Sheets <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="card" href="raven-slides.html">
+      <span class="tile" style="background:linear-gradient(135deg,#5f7be6,#4f9ad6)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M10 9l5 2.5L10 14zM9 21h6M12 17v4"/></svg></span>
+      <span class="role">Presentations</span>
+      <h3>Raven Slides</h3>
+      <p>Build decks with text, shapes, and images; present full-screen; import and export .pptx.</p>
+      <span class="open">Open Slides <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="card" href="raven-email.html">
+      <span class="tile" style="background:linear-gradient(135deg,#4a90d9,#46a6cf)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span>
+      <span class="role">Email builder</span>
+      <h3>Raven Email</h3>
+      <p>Turn an HTML design into a ready-to-send .eml — CSS inlined and images embedded for you.</p>
+      <span class="open">Open Email <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="card" href="raven-figgy.html">
+      <span class="tile" style="background:linear-gradient(135deg,#4f86dd,#3aa6c9)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="10" height="10" rx="1.5"/><circle cx="16" cy="15" r="4"/></svg></span>
+      <span class="role">Design tool</span>
+      <h3>Raven Figgy</h3>
+      <p>An infinite-canvas vector and UI editor with auto layout, components, and clickable prototypes.</p>
+      <span class="open">Open Figgy <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </main>
+
+  <div class="note">
+    <b>Everything runs in your browser.</b> Files you open are read on your own device and never uploaded — there's no server, no account, and no tracking. Close the tab and nothing lingers, so remember to save or export your work.
+  </div>
+
+  <footer>
+    Free &amp; open source under the <a href="https://github.com/tmanish/raven-suite/blob/main/LICENSE">GPL-3.0</a> license.<br>
+    Built as a service, not a product · <a href="https://github.com/tmanish/raven-suite">View the code on GitHub</a>
+  </footer>
+</div>
+
+<script>
+  (function(){
+    var b=document.body, mq=window.matchMedia('(prefers-color-scheme: dark)');
+    b.dataset.theme = mq.matches ? 'dark' : 'light';
+    document.getElementById('theme').addEventListener('click', function(){
+      b.dataset.theme = b.dataset.theme === 'dark' ? 'light' : 'dark';
+    });
+  })();
+</script>
+</body>
+</html>
