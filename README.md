@@ -142,8 +142,6 @@ See each app's **Limitations** section for full detail.
     └── raven-figgy.md
 ```
 
-You can keep the apps at the repo root (as above) or move them into an `apps/` folder — just update the links in this README and in `docs/` accordingly.
-
 ---
 
 ## Usage clause & disclaimer
