@@ -9,7 +9,9 @@ Every tool is designed as a familiar, capable alternative to a mainstream app, w
 ## What's inside
 
 
-**▶ Use them online.** Once GitHub Pages is enabled (see [Quick start](#quick-start)), the whole suite is live at **<https://tmanish.github.io/raven-suite/>**, and each tool opens directly in the browser:
+**▶ Use them online.** The whole suite is live at **<https://tmanish.github.io/raven-suite/>**, and each tool opens directly in the browser:
+
+(see [Quick start](#quick-start))
 
 | App | Open in your browser |
 |-----|----------------------|
