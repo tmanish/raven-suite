@@ -8,14 +8,6 @@ Every tool is designed as a familiar, capable alternative to a mainstream app, w
 
 ## What's inside
 
-| App | What it is | File | Docs |
-|-----|------------|------|------|
-| **Raven Write** | Rich‑text word processor | [`raven-write.html`](raven-write.html) | [docs](docs/raven-write.md) |
-| **Raven PDF** | PDF viewer, editor & annotator | [`raven-pdf.html`](raven-pdf.html) | [docs](docs/raven-pdf.md) |
-| **Raven Sheets** | Spreadsheet with a formula engine | [`raven-sheets.html`](raven-sheets.html) | [docs](docs/raven-sheets.md) |
-| **Raven Slides** | Presentation editor | [`raven-slides.html`](raven-slides.html) | [docs](docs/raven-slides.md) |
-| **Raven Email** | HTML‑to‑EML email builder | [`raven-email.html`](raven-email.html) | [docs](docs/raven-email.md) |
-| **Raven Figgy** | Vector / UI design tool | [`raven-figgy.html`](raven-figgy.html) | [docs](docs/raven-figgy.md) |
 
 **▶ Use them online.** Once GitHub Pages is enabled (see [Quick start](#quick-start)), the whole suite is live at **<https://tmanish.github.io/raven-suite/>**, and each tool opens directly in the browser:
 
@@ -28,6 +20,14 @@ Every tool is designed as a familiar, capable alternative to a mainstream app, w
 | Raven Email | https://tmanish.github.io/raven-suite/raven-email.html |
 | Raven Figgy | https://tmanish.github.io/raven-suite/raven-figgy.html |
 
+| App | What it is | File | Docs |
+|-----|------------|------|------|
+| **Raven Write** | Rich‑text word processor | [`raven-write.html`](raven-write.html) | [docs](docs/raven-write.md) |
+| **Raven PDF** | PDF viewer, editor & annotator | [`raven-pdf.html`](raven-pdf.html) | [docs](docs/raven-pdf.md) |
+| **Raven Sheets** | Spreadsheet with a formula engine | [`raven-sheets.html`](raven-sheets.html) | [docs](docs/raven-sheets.md) |
+| **Raven Slides** | Presentation editor | [`raven-slides.html`](raven-slides.html) | [docs](docs/raven-slides.md) |
+| **Raven Email** | HTML‑to‑EML email builder | [`raven-email.html`](raven-email.html) | [docs](docs/raven-email.md) |
+| **Raven Figgy** | Vector / UI design tool | [`raven-figgy.html`](raven-figgy.html) | [docs](docs/raven-figgy.md) |
 
 ---
 
