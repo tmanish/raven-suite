@@ -17,7 +17,7 @@ Common workflow:
 - Organise in the layers tree; group, create components, reuse instances.
 - Link frames with click → navigate interactions.
 - Press **Present** to click through your flows, or export a self‑contained prototype.
-- Save/open the native `.figgy` format; export SVG or PNG.
+- Save/open the native `.figgy` format; export the whole page as SVG or PNG, or export **any selected frame or layer** to **PNG / JPG / SVG / PDF** at 1–4× from the Export section of the design panel.
 
 ## Features
 
@@ -51,7 +51,7 @@ Common workflow:
 
 **Files & general**
 - Save / open the native **`.figgy`** format (JSON; round‑trips perfectly).
-- Export SVG and PNG.
+- Export: whole page (SVG/PNG) and per-selection — select any frame, layer, or multiple layers and export as PNG, JPG, SVG, or PDF, at 1×–4× scale (raster formats).
 - Undo / redo, copy / paste / duplicate, and a full set of keyboard shortcuts.
 - Light and dark themes.
 
@@ -96,13 +96,13 @@ Auto layout behaves like the equivalent feature in mainstream design tools:
 - Rendering with **SVG** (the same path used for on‑screen display and for export, so what you see is what you export).
 - **polygon‑clipping 0.15.7** — powers the boolean operations.
 - **JSZip 3.10.1** — unpacks the `.fig` archive to recover an embedded preview.
-- PNG export rasterises the SVG via an offscreen Canvas at 2× scale.
+- PNG/JPG export rasterises the SVG via an offscreen Canvas at the chosen scale (JPG on a white background at 0.92 quality). PDF export embeds the rendered image in a PDF page sized to the selection (via pdf‑lib, loaded on demand from the CDN the first time you use it); it is a raster PDF, not editable vector — use SVG for vectors.
 - Exported prototypes are a single self‑contained HTML file with inline screens, transparent navigation hotspots, and a small embedded script.
 - Web fonts (Google Fonts): Inter and Roboto.
 
 ## Security & privacy
 
-- Fully client‑side. Files you open are read locally and never uploaded; SVG/PNG/`.figgy`/prototype exports are generated in the browser and downloaded directly.
+- Fully client‑side. Files you open are read locally and never uploaded; SVG/PNG/JPG/PDF/`.figgy`/prototype exports are generated in the browser and downloaded directly.
 - No backend, accounts, cookies, telemetry, or analytics.
 - The only network activity is loading the two libraries (and the fonts) from public CDNs on first open. Opening a `.fig` does **not** make any network request — it unzips the local file. To run offline, vendor the libraries and fonts locally and update the `<script>`/`<link>` tags.
 - No `localStorage` is used.
