@@ -21,9 +21,10 @@ Common workflow:
 ## Features
 
 - Familiar formatting: bold, italic, underline, strikethrough, superscript/subscript, text colour, and highlight.
-- Paragraph control: alignment (left/centre/right/justify), ordered and unordered lists, indent/outdent, line spacing, and paragraph styles (headings, quotes, body).
+- Paragraph control: alignment (left/centre/right/justify), ordered and unordered lists, checklists (click a box to tick it off), indent/outdent, line spacing, and paragraph styles (headings, quotes, body).
 - Insert links, images, tables (with a grid picker), horizontal rules, page breaks, and the current date.
-- Find & replace (⌘/Ctrl+F).
+- Find & replace (⌘/Ctrl+F), and change case (UPPERCASE, lowercase, Title Case, Sentence case) on any selection.
+- Document outline: a panel listing your headings — click one to jump to it; it updates as you type.
 - Undo / redo, zoom (50–200%), and a live word / character / reading‑time count.
 - Page setup: Letter, A4, Legal, A5, and Tabloid; portrait or landscape; adjustable margins — reflected live on the page and in print/PDF output.
 - Smart paste (cleans up pasted formatting) and a spellcheck toggle.
@@ -33,6 +34,7 @@ Common workflow:
 
 - **`.docx` import is best‑effort.** Text, basic formatting, lists, tables, and images come through; tracked changes, comments, footnotes/endnotes, headers/footers, complex multi‑column layouts, and embedded objects may not.
 - **`.doc` export is not the legacy binary format.** It produces HTML packaged so Microsoft Word opens it; it is not a true binary `.doc` file.
+- Checklist boxes are interactive in the editor and in HTML export; in PDF/print output they appear in their current checked/unchecked state.
 - **PDF export is render‑based.** Output is generated from the on‑screen layout, so very large documents export more slowly and pagination may differ slightly from the browser's own print dialog.
 - Document layout is HTML‑based and will not be byte‑identical to Microsoft Word's layout engine.
 - No real‑time collaboration and no cross‑session autosave (export to save).
