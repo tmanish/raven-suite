@@ -173,6 +173,29 @@
     background:transparent;color:var(--ink);font-size:12px;cursor:pointer}
   .mini-btn:hover{background:var(--btn-hover)}
 
+  /* ---- modal dialogs ---- */
+  .modal-veil{position:fixed;inset:0;z-index:200;background:rgba(13,13,18,.4);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center}
+  .modal-veil.open{display:flex}
+  .modal{width:min(440px,calc(100vw - 40px));background:var(--panel,rgba(255,255,255,.9));backdrop-filter:blur(28px) saturate(1.7);-webkit-backdrop-filter:blur(28px) saturate(1.7);
+    border:1px solid rgba(255,255,255,.55);border-radius:18px;box-shadow:0 24px 70px rgba(13,13,18,.3);padding:20px;color:var(--ink,#0d0d12)}
+  body.dark .modal{background:rgba(29,29,37,.92);border-color:rgba(255,255,255,.1)}
+  .modal h3{font-size:15px;font-weight:700;margin:0 0 14px;letter-spacing:-.01em}
+  .modal .m-row{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}
+  .modal label{font-size:12.5px;font-weight:600;color:#71717f;min-width:74px}
+  .modal select,.modal input[type=text],.modal input[type=number]{
+    font:inherit;font-size:13px;padding:7px 10px;border-radius:9px;border:1px solid rgba(13,13,18,.14);background:rgba(255,255,255,.75);color:inherit;flex:1;min-width:0}
+  body.dark .modal select,body.dark .modal input[type=text],body.dark .modal input[type=number]{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14)}
+  .modal .m-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+  .m-btn{font:inherit;font-size:13px;font-weight:600;padding:8px 16px;border-radius:10px;border:1px solid rgba(13,13,18,.12);background:transparent;color:inherit;cursor:pointer}
+  .m-btn.primary{background:linear-gradient(120deg,#5b4bdb,#7b5cf0);border-color:transparent;color:#fff}
+  .m-btn:hover{transform:translateY(-1px)}
+  body.dark .m-btn{border-color:rgba(255,255,255,.16)}
+  .sig-pad{width:100%;height:170px;border:1.5px dashed rgba(13,13,18,.2);border-radius:12px;background:#fff;touch-action:none;cursor:crosshair;display:block}
+  body.dark .sig-pad{border-color:rgba(255,255,255,.2)}
+  .sig-tabs{display:flex;gap:6px;margin-bottom:12px}
+  .sig-tab{font:inherit;font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:999px;border:1px solid rgba(13,13,18,.12);background:transparent;color:inherit;cursor:pointer}
+  .sig-tab.on{background:linear-gradient(120deg,#5b4bdb,#7b5cf0);color:#fff;border-color:transparent}
+  body.dark .sig-tab{border-color:rgba(255,255,255,.16)}
   .toast{
     position:fixed;bottom:58px;left:50%;transform:translateX(-50%) translateY(12px);z-index:70;
     background:var(--ink);color:var(--canvas);font-size:12.5px;font-weight:500;padding:9px 18px;
@@ -209,6 +232,14 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       Merge
     </button>
+    <button class="tb-btn" id="pageNumBtn" title="Add page numbers">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M10.5 16l2-8M13 16h-4"/></svg>
+      Numbers
+    </button>
+    <button class="tb-btn" id="rangeBtn" title="Extract a page range as a new PDF">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/></svg>
+      Extract
+    </button>
     <button class="tb-btn primary" id="saveBtn">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5M5 17v2a2 2 0 002 2h10a2 2 0 002-2v-2"/></svg>
       Save PDF
@@ -226,6 +257,7 @@
     <button class="tool" data-tool="rect" title="Box (B)"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1.5"/></svg></button>
     <button class="tool" data-tool="text" title="Text note (T)"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></button>
     <button class="tool" data-tool="edit" title="Edit text — white out &amp; retype (X)"><svg viewBox="0 0 24 24"><path d="M4 20h7M14 4l6 6L9 21H4v-5z"/><path d="M12.5 6.5l5 5"/></svg></button>
+    <button class="tool" id="sigTool" title="Signature (S)"><svg viewBox="0 0 24 24"><path d="M3 17c2.5 0 3-6 5-6s1.2 5 3 5 2-8 4-8 1 9 3 9 1.6-2 3-2"/><path d="M3 21h18"/></svg></button>
     <button class="tool" id="imgTool" data-tool="image" title="Insert image (I)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg></button>
     <button class="tool" data-tool="eraser" title="Eraser (E)"><svg viewBox="0 0 24 24"><path d="M19 20H8.5L3.7 15.2a1.5 1.5 0 010-2.1L13 3.7a1.5 1.5 0 012.1 0l5.2 5.2a1.5 1.5 0 010 2.1L13 18.3"/></svg></button>
     <div class="tool-sep"></div>
@@ -278,6 +310,81 @@
   <button class="mini-btn" id="prevMatch" title="Previous">‹</button>
   <button class="mini-btn" id="nextMatch" title="Next">›</button>
   <button class="mini-btn" id="closeSearch" title="Close">✕</button>
+</div>
+
+<!-- signature modal -->
+<div class="modal-veil" id="sigVeil">
+  <div class="modal" role="dialog" aria-label="Create signature">
+    <h3>Your signature</h3>
+    <div class="sig-tabs">
+      <button class="sig-tab on" id="sigTabDraw">Draw</button>
+      <button class="sig-tab" id="sigTabType">Type</button>
+    </div>
+    <div id="sigDrawWrap">
+      <canvas class="sig-pad" id="sigPad" width="800" height="340"></canvas>
+      <div class="m-row" style="justify-content:space-between;margin-top:8px">
+        <div class="m-row" style="margin:0">
+          <label style="min-width:0">Ink</label>
+          <button class="m-btn" id="sigInkBlack" style="padding:5px 12px;border-width:2px;border-color:#5b4bdb">Black</button>
+          <button class="m-btn" id="sigInkBlue" style="padding:5px 12px;color:#1a47c9">Blue</button>
+        </div>
+        <button class="m-btn" id="sigClear">Clear</button>
+      </div>
+    </div>
+    <div id="sigTypeWrap" style="display:none">
+      <input type="text" id="sigTypeInput" placeholder="Type your name" style="width:100%;font-size:15px">
+      <div style="margin-top:12px;padding:16px;background:#fff;border-radius:12px;border:1.5px dashed rgba(13,13,18,.2);text-align:center">
+        <span id="sigTypePreview" style="font-family:'Snell Roundhand','Segoe Script','Brush Script MT',cursive;font-size:34px;color:#111;font-style:italic">&nbsp;</span>
+      </div>
+    </div>
+    <div class="m-actions">
+      <button class="m-btn" id="sigCancel">Cancel</button>
+      <button class="m-btn primary" id="sigUse">Use signature</button>
+    </div>
+  </div>
+</div>
+
+<!-- page numbers modal -->
+<div class="modal-veil" id="pnVeil">
+  <div class="modal" role="dialog" aria-label="Add page numbers">
+    <h3>Add page numbers</h3>
+    <div class="m-row"><label>Position</label>
+      <select id="pnPos">
+        <option value="bc" selected>Bottom · center</option>
+        <option value="br">Bottom · right</option>
+        <option value="bl">Bottom · left</option>
+        <option value="tc">Top · center</option>
+        <option value="tr">Top · right</option>
+        <option value="tl">Top · left</option>
+      </select>
+    </div>
+    <div class="m-row"><label>Style</label>
+      <select id="pnFmt">
+        <option value="n" selected>1, 2, 3 …</option>
+        <option value="of">1 of N</option>
+        <option value="page">Page 1 of N</option>
+      </select>
+    </div>
+    <div class="m-row"><label>Start at</label><input type="number" id="pnStart" value="1" min="0" style="max-width:90px"></div>
+    <p style="font-size:12px;color:#8a8a96;margin:8px 0 0;line-height:1.5">Numbers appear on every page and are saved into the exported PDF. Running this again replaces the previous numbers.</p>
+    <div class="m-actions">
+      <button class="m-btn" id="pnCancel">Cancel</button>
+      <button class="m-btn primary" id="pnApply">Add numbers</button>
+    </div>
+  </div>
+</div>
+
+<!-- extract range modal -->
+<div class="modal-veil" id="rgVeil">
+  <div class="modal" role="dialog" aria-label="Extract pages">
+    <h3>Extract pages</h3>
+    <div class="m-row"><label>Pages</label><input type="text" id="rgInput" placeholder="e.g. 1-3, 5, 8-10"></div>
+    <p style="font-size:12px;color:#8a8a96;margin:8px 0 0;line-height:1.5">Exports the pages you list (in that order) as a new PDF, with your annotations included. The open document is not changed.</p>
+    <div class="m-actions">
+      <button class="m-btn" id="rgCancel">Cancel</button>
+      <button class="m-btn primary" id="rgApply">Extract</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -543,7 +650,9 @@
       ctx.fillStyle=a.color; const fs=(a.size||13)*z;
       ctx.font='500 '+fs+'px -apple-system,Helvetica,Arial,sans-serif';
       ctx.textBaseline='top';
+      ctx.textAlign = a.align==='c'?'center':a.align==='r'?'right':'left';
       a.text.split('\n').forEach((line,i)=>ctx.fillText(line,x,y+i*fs*1.3));
+      ctx.textAlign='left';
     }
   }
   const hexA=(hex,a)=>{
@@ -649,6 +758,132 @@
     rd.readAsDataURL(f);
   });
   $('imgTool').addEventListener('click', ()=>{ if(!S.pendingImage) $('imgInput').click(); });
+
+  /* ───────── signature ───────── */
+  const sigPad=$('sigPad'), sigCtx=sigPad.getContext('2d');
+  let sigInk='#111111', sigDrawn=false, sigMode='draw', sigStroke=null;
+  function sigReset(){ sigCtx.clearRect(0,0,sigPad.width,sigPad.height); sigDrawn=false; }
+  function sigPos(e){ const r=sigPad.getBoundingClientRect(); return [(e.clientX-r.left)*sigPad.width/r.width,(e.clientY-r.top)*sigPad.height/r.height]; }
+  sigPad.addEventListener('pointerdown',e=>{ e.preventDefault(); sigPad.setPointerCapture(e.pointerId); sigStroke=sigPos(e); });
+  sigPad.addEventListener('pointermove',e=>{
+    if(!sigStroke) return;
+    const [x,y]=sigPos(e);
+    sigCtx.strokeStyle=sigInk; sigCtx.lineWidth=5; sigCtx.lineCap='round'; sigCtx.lineJoin='round';
+    sigCtx.beginPath(); sigCtx.moveTo(sigStroke[0],sigStroke[1]); sigCtx.lineTo(x,y); sigCtx.stroke();
+    sigStroke=[x,y]; sigDrawn=true;
+  });
+  ['pointerup','pointercancel'].forEach(ev=>sigPad.addEventListener(ev,()=>{ sigStroke=null; }));
+  $('sigClear').onclick=sigReset;
+  $('sigInkBlack').onclick=()=>{ sigInk='#111111'; $('sigInkBlack').style.borderColor='#5b4bdb'; $('sigInkBlack').style.borderWidth='2px'; $('sigInkBlue').style.borderColor=''; $('sigInkBlue').style.borderWidth=''; };
+  $('sigInkBlue').onclick=()=>{ sigInk='#1a47c9'; $('sigInkBlue').style.borderColor='#5b4bdb'; $('sigInkBlue').style.borderWidth='2px'; $('sigInkBlack').style.borderColor=''; $('sigInkBlack').style.borderWidth=''; };
+  function sigSetMode(m){
+    sigMode=m;
+    $('sigTabDraw').classList.toggle('on',m==='draw');
+    $('sigTabType').classList.toggle('on',m==='type');
+    $('sigDrawWrap').style.display=m==='draw'?'':'none';
+    $('sigTypeWrap').style.display=m==='type'?'':'none';
+    if(m==='type') $('sigTypeInput').focus();
+  }
+  $('sigTabDraw').onclick=()=>sigSetMode('draw');
+  $('sigTabType').onclick=()=>sigSetMode('type');
+  $('sigTypeInput').addEventListener('input',e=>{ $('sigTypePreview').textContent=e.target.value||'\u00a0'; });
+  $('sigTool').onclick=()=>{ $('sigVeil').classList.add('open'); };
+  $('sigCancel').onclick=()=>$('sigVeil').classList.remove('open');
+  function trimCanvas(c){
+    const ctx=c.getContext('2d'), d=ctx.getImageData(0,0,c.width,c.height).data;
+    let minX=c.width,minY=c.height,maxX=0,maxY=0,found=false;
+    for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){
+      if(d[(y*c.width+x)*4+3]>10){ found=true; if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y; }
+    }
+    if(!found) return null;
+    const pad=8, w=maxX-minX+1+pad*2, h=maxY-minY+1+pad*2;
+    const out=document.createElement('canvas'); out.width=w; out.height=h;
+    out.getContext('2d').drawImage(c,minX-pad,minY-pad,w,h,0,0,w,h);
+    return out;
+  }
+  $('sigUse').onclick=()=>{
+    let src=null;
+    if(sigMode==='draw'){
+      if(!sigDrawn){ toast('Draw your signature first'); return; }
+      src=trimCanvas(sigPad);
+    }else{
+      const name=$('sigTypeInput').value.trim();
+      if(!name){ toast('Type your name first'); return; }
+      const c=document.createElement('canvas'); c.width=900; c.height=220;
+      const x=c.getContext('2d');
+      x.font='italic 96px "Snell Roundhand","Segoe Script","Brush Script MT",cursive';
+      x.fillStyle=sigInk; x.textBaseline='middle'; x.fillText(name,30,110);
+      src=trimCanvas(c);
+    }
+    if(!src){ toast('Nothing to use yet'); return; }
+    S.pendingImage=src.toDataURL('image/png');
+    $('sigVeil').classList.remove('open');
+    setTool('image');
+    toast('Drag on the page to place your signature');
+  };
+
+  /* ───────── page numbers ───────── */
+  $('pageNumBtn').onclick=()=>{
+    if(!S.pages.length){ toast('Open a PDF first'); return; }
+    $('pnVeil').classList.add('open');
+  };
+  $('pnCancel').onclick=()=>$('pnVeil').classList.remove('open');
+  $('pnApply').onclick=()=>{
+    const pos=$('pnPos').value, fmt=$('pnFmt').value, start=parseInt($('pnStart').value||'1',10);
+    snapshot();
+    for(const id in S.annots) S.annots[id]=S.annots[id].filter(a=>!a.pn);
+    const N=S.pages.length;
+    S.pages.forEach((p,i)=>{
+      const n=start+i;
+      const label = fmt==='of' ? `${n} of ${start+N-1}` : fmt==='page' ? `Page ${n} of ${start+N-1}` : String(n);
+      const v0=vp(p,1);
+      const m=26, fs=11;
+      const dx = pos[1]==='c' ? v0.width/2 : pos[1]==='r' ? v0.width-m : m;
+      const dy = pos[0]==='b' ? v0.height-m : m-fs+8;
+      const [nx,ny]=v0.convertToPdfPoint(dx,dy);
+      (S.annots[p.id] ||= []).push({type:'text',pn:true,color:'#3a3a44',nx,ny,size:fs,text:label,align:pos[1]==='c'?'c':pos[1]==='r'?'r':'l'});
+    });
+    S.pages.forEach(p=>p.el&&drawOverlay(p));
+    updateStatus();
+    $('pnVeil').classList.remove('open');
+    toast(`Page numbers added to ${N} page${N>1?'s':''}`);
+  };
+
+  /* ───────── extract page range ───────── */
+  $('rangeBtn').onclick=()=>{
+    if(!S.pages.length){ toast('Open a PDF first'); return; }
+    $('rgInput').value=''; $('rgVeil').classList.add('open');
+    setTimeout(()=>$('rgInput').focus(),50);
+  };
+  $('rgCancel').onclick=()=>$('rgVeil').classList.remove('open');
+  function parseRange(str,max){
+    const out=[];
+    for(const part of str.split(',')){
+      const s=part.trim(); if(!s) continue;
+      const m=s.match(/^(\d+)\s*[-–]\s*(\d+)$/);
+      if(m){ let a=+m[1],b=+m[2]; if(a<1||b<1||a>max||b>max) return null;
+        if(a<=b){for(let i=a;i<=b;i++)out.push(i);} else {for(let i=a;i>=b;i--)out.push(i);} }
+      else if(/^\d+$/.test(s)){ const n=+s; if(n<1||n>max) return null; out.push(n); }
+      else return null;
+    }
+    return out.length?out:null;
+  }
+  $('rgApply').onclick=async()=>{
+    const nums=parseRange($('rgInput').value, S.pages.length);
+    if(!nums){ toast(`Enter pages between 1 and ${S.pages.length}, e.g. 1-3, 5`); return; }
+    $('rgVeil').classList.remove('open');
+    toast('Building PDF…');
+    try{
+      const subset=nums.map(n=>S.pages[n-1]);
+      const out=await bakePages(subset);
+      const base=(S.docs[0].name||'document.pdf').replace(/\.pdf$/i,'');
+      downloadBytes(`${base}-pages-${nums.length===1?nums[0]:nums[0]+'-'+nums[nums.length-1]}.pdf`, await out.save());
+      toast(`Extracted ${nums.length} page${nums.length>1?'s':''}`);
+    }catch(e){ console.error(e); toast('Extract failed — see console'); }
+  };
+  [['sigVeil','sigCancel'],['pnVeil','pnCancel'],['rgVeil','rgCancel']].forEach(([v,c])=>{
+    $(v).addEventListener('mousedown',e=>{ if(e.target===$(v)) $(c).click(); });
+  });
 
   /* ───────── tools / colors ───────── */
   const hints = {
@@ -826,7 +1061,10 @@
         else if (a.type==='text'){
           const fs=a.size||13;
           a.text.split('\n').forEach((line,i)=>{
-            copied.drawText(line,{x:a.nx,y:a.ny-fs*(i+0.85)*1.0 - i*fs*0.3,size:fs,font,color:C});
+            let tx=a.nx;
+            if (a.align==='c') tx-=font.widthOfTextAtSize(line,fs)/2;
+            else if (a.align==='r') tx-=font.widthOfTextAtSize(line,fs);
+            copied.drawText(line,{x:tx,y:a.ny-fs*(i+0.85)*1.0 - i*fs*0.3,size:fs,font,color:C});
           });
         }
       }
@@ -875,6 +1113,7 @@
     const k=e.key.toLowerCase();
     if (map[k]) setTool(map[k]);
     if (k==='i'){ setTool('image'); if(!S.pendingImage) $('imgInput').click(); }
+    if (k==='s'){ $('sigTool').click(); }
     if (e.key==='/'){ e.preventDefault(); $('searchBtn').click(); }
     if (e.key==='+'||e.key==='='){ $('zoomRange').value=+$('zoomRange').value+10; $('zoomRange').dispatchEvent(new Event('input')); }
     if (e.key==='-'){ $('zoomRange').value=+$('zoomRange').value-10; $('zoomRange').dispatchEvent(new Event('input')); }

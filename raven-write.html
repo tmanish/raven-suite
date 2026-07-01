@@ -177,6 +177,41 @@
   mark{background:rgba(255,214,10,.45);border-radius:2px;padding:0 1px}
 
   /* ───────── Status bar ───────── */
+  /* ---- checklist ---- */
+  .page ul.checklist{list-style:none;padding-left:6px}
+  .page ul.checklist li{position:relative;padding-left:30px;margin:4px 0;cursor:default}
+  .page ul.checklist li::before{
+    content:"";position:absolute;left:2px;top:.28em;width:16px;height:16px;
+    border:1.6px solid #9a9aa6;border-radius:5px;background:#fff;cursor:pointer;box-sizing:border-box;
+  }
+  .page ul.checklist li.checked::before{
+    background:linear-gradient(120deg,#5b4bdb,#7b5cf0);border-color:transparent;
+    background-size:cover;
+  }
+  .page ul.checklist li.checked::after{
+    content:"";position:absolute;left:5.5px;top:calc(.28em + 3.5px);width:9px;height:5px;
+    border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);cursor:pointer;
+  }
+  .page ul.checklist li.checked{color:#9a9aa6;text-decoration:line-through;text-decoration-color:#c2c2cc}
+  body.dark .page ul.checklist li::before{background:#26262e;border-color:#5a5a66}
+  /* ---- document outline ---- */
+  .outline{
+    position:fixed;left:14px;top:112px;bottom:46px;width:224px;z-index:40;overflow:auto;
+    background:var(--panel,rgba(255,255,255,.72));backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);
+    border:1px solid rgba(13,13,18,.1);border-radius:14px;box-shadow:0 10px 30px rgba(13,13,18,.10);
+    padding:12px 8px;display:none;
+  }
+  .outline.show{display:block}
+  .outline h4{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8a8a96;padding:2px 10px 8px}
+  .outline .oi{display:block;width:100%;text-align:left;border:0;background:none;cursor:pointer;font:inherit;
+    font-size:12.5px;color:inherit;padding:5px 10px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .outline .oi:hover{background:rgba(123,92,240,.12)}
+  .outline .oi.l1{font-weight:700}
+  .outline .oi.l2{padding-left:22px}
+  .outline .oi.l3{padding-left:34px;font-size:12px;color:#71717f}
+  .outline .oi-empty{font-size:12px;color:#9a9aa6;padding:4px 10px;line-height:1.5}
+  body.dark .outline{background:rgba(29,29,37,.7);border-color:rgba(255,255,255,.09);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  @media(max-width:1120px){.outline{display:none!important}}
   .statusbar{
     position:fixed;left:0;right:0;bottom:0;height:52px;display:flex;align-items:center;
     justify-content:space-between;padding:0 20px;z-index:40;
@@ -358,6 +393,7 @@
 
     <button class="tool" data-cmd="insertUnorderedList" title="Bulleted list"><svg viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg></button>
     <button class="tool" data-cmd="insertOrderedList" title="Numbered list"><svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11"/><path d="M4 5l1.5-1v4M3.8 11.6c.3-.7 1.1-1 1.8-.7.6.3.9 1 .6 1.6L3.8 15h2.8M4 17.5h1.7a1.1 1.1 0 010 2.2H5a1.1 1.1 0 000 .1h.7a1.1 1.1 0 010 2.2H4" stroke-width="1.4"/></svg></button>
+    <button class="tool" id="checklistBtn" title="Checklist"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="2"/><path d="M5.4 7.4l1.3 1.3 2.2-2.5M13 6h8M13 12h8M13 18h8"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg></button>
     <button class="tool" data-cmd="outdent" title="Decrease indent"><svg viewBox="0 0 24 24"><path d="M4 6h16M11 12h9M4 18h16M7 9.5L4.5 12 7 14.5"/></svg></button>
     <button class="tool" data-cmd="indent" title="Increase indent"><svg viewBox="0 0 24 24"><path d="M4 6h16M11 12h9M4 18h16M4.5 9.5L7 12l-2.5 2.5"/></svg></button>
     <button class="tool" id="spacingBtn" title="Line spacing"><svg viewBox="0 0 24 24"><path d="M11 6h10M11 12h10M11 18h10M5 5v14M3 7l2-2 2 2M3 17l2 2 2-2"/></svg></button>
@@ -375,7 +411,9 @@
     <div class="tool-sep"></div>
 
     <button class="tool" id="findBtn" title="Find &amp; replace (⌘F)"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    <button class="tool" id="caseBtn" title="Change case" style="font-weight:700;font-size:12.5px">Aa</button>
     <button class="tool" data-cmd="removeFormat" title="Clear formatting"><svg viewBox="0 0 24 24"><path d="M6 5h12M9 5l-2.5 14M13 5l-1.2 6.6M4 20L20 4" /></svg></button>
+    <button class="tool" id="outlineBtn" title="Document outline"><svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h7M4 18h9M18 6v12M15.5 15.5L18 18l2.5-2.5"/></svg></button>
   </div>
 </div>
 
@@ -435,6 +473,19 @@
   <button class="menu-item" data-spacing="1.8">Relaxed — 1.8</button>
   <button class="menu-item" data-spacing="2.2">Double — 2.2</button>
 </div>
+
+<div class="popover" id="caseMenu">
+  <div class="menu-label">Change case</div>
+  <button class="menu-item" data-case="upper">UPPERCASE</button>
+  <button class="menu-item" data-case="lower">lowercase</button>
+  <button class="menu-item" data-case="title">Title Case</button>
+  <button class="menu-item" data-case="sentence">Sentence case</button>
+</div>
+
+<aside class="outline" id="outlinePanel" aria-label="Document outline">
+  <h4>Outline</h4>
+  <div id="outlineList"></div>
+</aside>
 
 <div class="popover" id="pageMenu" style="min-width:248px;padding:12px">
   <div class="menu-label" style="padding:0 0 8px">Page setup</div>
@@ -585,6 +636,67 @@
   $('exportBtn').onclick=e=>{e.stopPropagation();showPop($('exportMenu'),$('exportBtn'));};
   $('spacingBtn').onclick=e=>{e.stopPropagation();showPop($('spacingMenu'),$('spacingBtn'));};
   $('tableBtn').onclick=e=>{e.stopPropagation();showPop($('tableMenu'),$('tableBtn'));};
+  $('caseBtn').onclick=e=>{e.stopPropagation();showPop($('caseMenu'),$('caseBtn'));};
+
+  /* ── change case ── */
+  const caseFns={
+    upper:s=>s.toUpperCase(),
+    lower:s=>s.toLowerCase(),
+    title:s=>s.toLowerCase().replace(/(^|[\s\-—("'\u2018\u201C])([a-zà-ÿ])/g,(m,p,c)=>p+c.toUpperCase()),
+    sentence:s=>s.toLowerCase().replace(/(^\s*[a-zà-ÿ])|([.!?]\s+[a-zà-ÿ])/g,m=>m.toUpperCase()),
+  };
+  document.querySelectorAll('[data-case]').forEach(b=>b.onclick=()=>{
+    closePop(); page.focus();
+    const sel=getSelection();
+    if(!sel.rangeCount||sel.isCollapsed){ toast('Select some text first'); return; }
+    const txt=sel.toString();
+    document.execCommand('insertText',false,caseFns[b.dataset.case](txt));
+    markDirty(); updateCounts();
+  });
+
+  /* ── checklist ── */
+  $('checklistBtn').onclick=()=>{
+    page.focus();
+    document.execCommand('insertUnorderedList');
+    const sel=getSelection();
+    if(sel.rangeCount){
+      let n=sel.anchorNode.nodeType===3?sel.anchorNode.parentElement:sel.anchorNode;
+      const ul=n.closest('ul');
+      if(ul&&page.contains(ul)) ul.classList.toggle('checklist');
+    }
+    refreshStates(); markDirty();
+  };
+  page.addEventListener('click',e=>{
+    const li=e.target.closest('ul.checklist > li');
+    if(!li||!page.contains(li)) return;
+    const r=li.getBoundingClientRect();
+    if(e.clientX < r.left+26){ li.classList.toggle('checked'); markDirty(); }
+  });
+
+  /* ── document outline ── */
+  const outlinePanel=$('outlinePanel'), outlineList=$('outlineList');
+  let outlineTimer=null;
+  function buildOutline(){
+    const hs=page.querySelectorAll('h1,h2,h3');
+    outlineList.innerHTML='';
+    if(!hs.length){
+      outlineList.innerHTML='<div class="oi-empty">Headings you add (Title, Heading, Subheading) will appear here.</div>';
+      return;
+    }
+    hs.forEach((h,i)=>{
+      const b=document.createElement('button');
+      b.className='oi l'+h.tagName[1];
+      b.textContent=h.textContent.trim()||'(untitled)';
+      b.onclick=()=>{ h.scrollIntoView({behavior:'smooth',block:'start'}); };
+      outlineList.appendChild(b);
+    });
+  }
+  function refreshOutline(){ if(outlinePanel.classList.contains('show')){ clearTimeout(outlineTimer); outlineTimer=setTimeout(buildOutline,300); } }
+  $('outlineBtn').onclick=()=>{
+    outlinePanel.classList.toggle('show');
+    $('outlineBtn').classList.toggle('active',outlinePanel.classList.contains('show'));
+    if(outlinePanel.classList.contains('show')) buildOutline();
+  };
 
   /* ── line spacing ── */
   document.querySelectorAll('[data-spacing]').forEach(b=>b.onclick=()=>{
@@ -705,7 +817,7 @@
       $('saveDot').classList.remove('dirty'); $('saveText').textContent='Saved';
     },900);
   }
-  page.addEventListener('input',()=>{updateCounts();markDirty();});
+  page.addEventListener('input',()=>{updateCounts();markDirty();refreshOutline();});
   updateCounts();
 
   /* ── zoom ── */
@@ -835,7 +947,7 @@
     if(kind==='txt'){download(title+'.txt',new Blob([page.innerText],{type:'text/plain'}));}
     if(kind==='md'){download(title+'.md',new Blob([htmlToMd(page)],{type:'text/markdown'}));}
     if(kind==='html'){
-      const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title><style>body{font-family:-apple-system,Segoe UI,sans-serif;max-width:720px;margin:60px auto;line-height:1.6;padding:0 24px;color:#111}blockquote{border-left:3px solid #7b5cf0;padding-left:16px;color:#666;font-style:italic}td,th{border:1px solid #ddd;padding:8px 12px}table{border-collapse:collapse}pre{background:#f4f4f6;padding:14px;border-radius:8px;overflow:auto}</style></head><body>${body}</body></html>`;
+      const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title><style>body{font-family:-apple-system,Segoe UI,sans-serif;max-width:720px;margin:60px auto;line-height:1.6;padding:0 24px;color:#111}blockquote{border-left:3px solid #7b5cf0;padding-left:16px;color:#666;font-style:italic}td,th{border:1px solid #ddd;padding:8px 12px}table{border-collapse:collapse}pre{background:#f4f4f6;padding:14px;border-radius:8px;overflow:auto}ul.checklist{list-style:none;padding-left:6px}ul.checklist li{position:relative;padding-left:30px;margin:4px 0}ul.checklist li::before{content:"";position:absolute;left:2px;top:.28em;width:16px;height:16px;border:1.6px solid #9a9aa6;border-radius:5px;box-sizing:border-box}ul.checklist li.checked::before{background:#7b5cf0;border-color:transparent}ul.checklist li.checked::after{content:"";position:absolute;left:5.5px;top:calc(.28em + 3.5px);width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}ul.checklist li.checked{color:#9a9aa6;text-decoration:line-through}</style></head><body>${body}</body></html>`;
       download(title+'.html',new Blob([html],{type:'text/html'}));
     }
     if(kind==='pdf'){
