@@ -1145,6 +1145,7 @@ function renderAssets(){
   });
 }
 window.__figgy.renderScene=renderScene;
+window.__figgy.renderPanels=renderPanels;
 /* ════════════════ RIGHT PANEL: DESIGN ════════════════ */
 function commitEdits(){ if(editingId){ const ta=$("textEditor"); const n=N(editingId); if(n){n.text=ta.value;n._editing=false;} editingId=null; ta.style.display="none"; } }
 function setProp(fn){ snapshot(); [...SEL].forEach(id=>{const n=N(id); if(n) fn(n);}); renderScene(); drawOverlay(); renderRight(); }
@@ -1257,8 +1258,24 @@ function renderRight(){
   if(single&&single.type!=="instance") h+=`<button class="mini-add" id="makeComp" style="border-style:solid">⬡ Create component</button>`;
   if(single&&single.type==="instance") h+=`<button class="mini-add" id="detachComp" style="border-style:solid">Detach instance</button>`;
   h+=`</div>`;
+  // export (Figma-style: any selection can be exported)
+  h+=`<div class="sect"><div class="field-label">Export</div>
+    <div class="row" style="gap:6px">
+      <select class="selectbox" id="expFmt" style="flex:1.2">
+        <option value="png">PNG</option><option value="jpg">JPG</option>
+        <option value="svg">SVG</option><option value="pdf">PDF</option>
+      </select>
+      <select class="selectbox" id="expScale" style="flex:1">
+        <option value="1">1×</option><option value="2" selected>2×</option>
+        <option value="3">3×</option><option value="4">4×</option>
+      </select>
+    </div>
+    <button class="mini-add" id="expBtn" style="border-style:solid;margin-top:6px">↓ Export ${esc(single?(single.name||single.type):ids.length+" layers")}</button></div>`;
   c.innerHTML=h;
   bindDesign(single, ids);
+  const _syncExpScale=()=>{ const f=$("expFmt").value; $("expScale").disabled=(f==="svg"); };
+  $("expFmt").onchange=_syncExpScale; _syncExpScale();
+  $("expBtn").onclick=()=>exportSelection([...SEL], $("expFmt").value, +$("expScale").value);
 }
 /* 3x3 alignment grid for auto layout (Figma-style). Maps grid cell -> primary/counter. */
 function alGridCells(L){
@@ -1786,6 +1803,95 @@ function contentBounds(){ const ids=page().roots.filter(id=>N(id)); if(!ids.leng
 function standaloneSVG(pad){ pad=pad||0; const {defs,body}=buildPageSVG(); const b=contentBounds();
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.max(1,Math.round(b.w+pad*2))}" height="${Math.max(1,Math.round(b.h+pad*2))}" viewBox="${(b.x-pad)} ${(b.y-pad)} ${(b.w+pad*2)} ${(b.h+pad*2)}"><defs>${defs}</defs>${body}</svg>`; }
 function exportSVG(){ download(standaloneSVG(0), (DOC.name||"design")+".svg", "image/svg+xml"); toast("Exported SVG"); }
+
+/* ── per-selection export: PNG / JPG / SVG / PDF ── */
+function selectionSVG(ids){
+  const nodes=ids.map(N).filter(Boolean);
+  if(!nodes.length) return null;
+  const zsorted=[...nodes].sort((a,b)=>{ // keep page z-order (document order)
+    const order=n=>{ let path=[],cur=n,g=0; while(cur&&g++<100){ path.unshift(listOf(cur).indexOf(cur.id)); cur=cur.parent?N(cur.parent):null; } return path; };
+    const A=order(a),B=order(b);
+    for(let i=0;i<Math.max(A.length,B.length);i++){ const d=(A[i]??-1)-(B[i]??-1); if(d) return d; }
+    return 0;
+  });
+  const b=selectionAABB(ids); if(!b) return null;
+  const defs=[]; const body=zsorted.map(n=>nodeSVG(n,defs)).join("");
+  const w=Math.max(1,Math.round(b.w)), hh=Math.max(1,Math.round(b.h));
+  return {svg:`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${hh}" viewBox="${b.x} ${b.y} ${b.w} ${b.h}"><defs>${defs.join("")}</defs>${body}</svg>`, b};
+}
+function exportName(ids){
+  const nodes=ids.map(N).filter(Boolean);
+  const base = nodes.length===1 ? (nodes[0].name||nodes[0].type) : (DOC.name||"design")+"-selection";
+  return base.replace(/[^\w\-. ]+/g,"").trim().replace(/\s+/g,"-")||"layer";
+}
+function rasterizeSelection(ids, scale, jpg){
+  return new Promise((resolve,reject)=>{
+    const out=selectionSVG(ids); if(!out){ reject(new Error("empty")); return; }
+    const {svg,b}=out;
+    const img=new Image();
+    img.onload=()=>{
+      const cv=document.createElement("canvas");
+      cv.width=Math.max(1,Math.round(b.w*scale)); cv.height=Math.max(1,Math.round(b.h*scale));
+      const ctx=cv.getContext("2d");
+      if(jpg){ ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,cv.width,cv.height); }
+      ctx.scale(scale,scale); ctx.drawImage(img,0,0,b.w,b.h);
+      resolve({cv,b});
+    };
+    img.onerror=()=>reject(new Error("svg rasterize failed"));
+    img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+  });
+}
+let _pdfLibLoading=null;
+function ensurePdfLib(){
+  if(window.PDFLib) return Promise.resolve();
+  if(_pdfLibLoading) return _pdfLibLoading;
+  _pdfLibLoading=new Promise((res,rej)=>{
+    const s=document.createElement("script");
+    s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js";
+    s.onload=()=>res(); s.onerror=()=>{ _pdfLibLoading=null; rej(new Error("pdf-lib failed to load")); };
+    document.head.appendChild(s);
+  });
+  return _pdfLibLoading;
+}
+window.__figgy.selectionSVG=selectionSVG;
+window.__figgy.exportName=exportName;
+window.__figgy.exportSelection=(...a)=>exportSelection(...a);
+window.__figgy.SELset=s=>{SEL=new Set(s);};
+async function exportSelection(ids, fmt, scale){
+  const nodes=ids.map(N).filter(Boolean);
+  if(!nodes.length){ toast("Select a frame or layer first"); return; }
+  const name=exportName(ids);
+  try{
+    if(fmt==="svg"){
+      const out=selectionSVG(ids); if(!out){ toast("Nothing to export"); return; }
+      download(out.svg, name+".svg", "image/svg+xml"); toast("Exported "+name+".svg"); return;
+    }
+    if(fmt==="png"||fmt==="jpg"){
+      const {cv}=await rasterizeSelection(ids, scale, fmt==="jpg");
+      const mime=fmt==="jpg"?"image/jpeg":"image/png";
+      cv.toBlob(bl=>{
+        if(!bl){ toast("Export failed"); return; }
+        download(bl, name+"."+fmt, mime); toast(`Exported ${name}.${fmt} @ ${scale}×`);
+      }, mime, fmt==="jpg"?0.92:undefined);
+      return;
+    }
+    if(fmt==="pdf"){
+      toast("Building PDF…");
+      const [{cv,b}] = await Promise.all([rasterizeSelection(ids, Math.max(scale,2), false), ensurePdfLib()]);
+      const {PDFDocument}=window.PDFLib;
+      const doc=await PDFDocument.create();
+      const pg=doc.addPage([Math.max(1,b.w), Math.max(1,b.h)]);
+      const pngBytes=Uint8Array.from(atob(cv.toDataURL("image/png").split(",")[1]), c=>c.charCodeAt(0));
+      const im=await doc.embedPng(pngBytes);
+      pg.drawImage(im,{x:0,y:0,width:pg.getWidth(),height:pg.getHeight()});
+      download(new Blob([await doc.save()],{type:"application/pdf"}), name+".pdf", "application/pdf");
+      toast("Exported "+name+".pdf"); return;
+    }
+  }catch(err){
+    console.error(err);
+    toast(String(err&&err.message).includes("taint") ? "Export blocked — a remote image tainted the canvas. Use uploaded/data-URI images." : "Export failed — see console");
+  }
+}
 function exportPNG(){
   const b=contentBounds(); const scale=2; const svg=standaloneSVG(0);
   const img=new Image();
